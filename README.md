@@ -38,16 +38,28 @@ npm run dev
 GET/POST  /api/attacks
 GET/POST  /api/pokemons
 GET/POST  /api/trainers
-POST      /api/battles/random
+POST      /api/battles/random           # Combat aléatoire (avec taverne)
+POST      /api/battles/deterministic    # Combat déterministe (Pokémon avec le plus de PV)
+POST      /api/battles/arena1           # 100 combats aléatoires (vainqueur par niveau/XP)
+POST      /api/battles/arena2           # 100 combats déterministes consécutifs
 POST      /api/pokemons/:id/heal
 POST      /api/trainers/:id/add-pokemon
+POST      /api/trainers/:id/heal
+POST      /api/trainers/:id/gain-experience
 ```
 
 ## Concepts POO
 
-- `Attack` : nom, dégâts, limite d'utilisation
-- `Pokemon` : nom, PV, attaques (max 4)
-- `Trainer` : nom, niveau, expérience, pokémons
+- `Attack` : nom, dégâts, limite d'utilisation, méthode display()
+- `Pokemon` : nom, PV, attaques (max 4, sans doublon), heal(), attackRandom()
+- `Trainer` : nom, niveau, expérience, pokémons, healAll(), gainExperience()
+
+## Types de combats
+
+1. **Défi aléatoire** : Taverne + Pokémon aléatoire
+2. **Arène 1** : 100 combats aléatoires, vainqueur selon niveau/XP
+3. **Défi déterministe** : Pokémon avec le plus de PV, sans taverne
+4. **Arène 2** : 100 combats déterministes, arrêt si tous les Pokémon perdent
 
 ---
 

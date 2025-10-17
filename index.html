@@ -138,14 +138,17 @@
       <div id="trainer-list" class="grid">Chargement...</div>
     </section>
     <section>
-      <h2>⚔️ Combat rapide</h2>
+      <h2>⚔️ Combats</h2>
       <div class="battle-form-container">
         <form id="battle-form">
         <label for="trainer1">Dresseur 1 :</label>
         <select id="trainer1"></select>
         <label for="trainer2">Dresseur 2 :</label>
         <select id="trainer2"></select>
-        <button class="btn" type="submit">⚡ Lancer un combat aléatoire</button>
+        <button class="btn" type="submit" name="random">⚡ Combat aléatoire</button>
+        <button class="btn" type="submit" name="deterministic">🎯 Combat déterministe</button>
+        <button class="btn" type="submit" name="arena1">🏟️ Arène 1 (100 combats)</button>
+        <button class="btn" type="submit" name="arena2">🏆 Arène 2 (série déterministe)</button>
         </form>
       </div>
       <div id="battle-log" class="log" style="display:none; margin-top: 1.5rem;"></div>
@@ -198,6 +201,7 @@
     }
     document.getElementById('battle-form').onsubmit = async e => {
       e.preventDefault();
+      const battleType = e.submitter.name;
       const t1 = document.getElementById('trainer1').value;
       const t2 = document.getElementById('trainer2').value;
       if (t1 === t2) return alert('Choisissez deux dresseurs différents.');
@@ -205,7 +209,11 @@
       log.style.display = 'block';
       log.textContent = 'Combat en cours...';
       try {
-        const res = await fetch(API + '/battles/random', {
+        const endpoint = battleType === 'random' ? '/battles/random' 
+          : battleType === 'deterministic' ? '/battles/deterministic'
+          : battleType === 'arena1' ? '/battles/arena1'
+          : '/battles/arena2';
+        const res = await fetch(API + endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ trainer1Id: Number(t1), trainer2Id: Number(t2) })
@@ -213,6 +221,8 @@
         const data = await res.json();
         if (data.battleLog) {
           log.textContent = data.battleLog.join('\n');
+        } else if (data.message) {
+          log.textContent = data.message + '\n' + JSON.stringify(data, null, 2);
         } else {
           log.textContent = 'Erreur : ' + (data.error || 'Combat impossible');
         }
