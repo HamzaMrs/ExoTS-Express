@@ -289,7 +289,12 @@ app.post('/api/battles/arena1', async (req, res) => {
     else if (t1.rows[0].experience >= t2.rows[0].experience) winner = t1.rows[0].name;
     else winner = t2.rows[0].name;
     
-    res.json({ wins1, wins2, winner, message: `Vainqueur: ${winner} (niveau/expérience)` });
+    const msg = `🏟️ ARÈNE 1 - Résultats:\n\n` +
+      `${t1.rows[0].name}: ${wins1} victoires (Niveau ${t1.rows[0].level}, XP ${t1.rows[0].experience})\n` +
+      `${t2.rows[0].name}: ${wins2} victoires (Niveau ${t2.rows[0].level}, XP ${t2.rows[0].experience})\n\n` +
+      `🏆 Vainqueur: ${winner} (plus haut niveau/expérience)`;
+    
+    res.json({ wins1, wins2, winner, message: msg });
   } catch (error) {
     res.status(500).json({ error: 'Erreur Arène 1', details: String(error) });
   }
@@ -396,7 +401,12 @@ app.post('/api/battles/arena2', async (req, res) => {
       winner = Number(alive1.rows[0].count) >= Number(alive2.rows[0].count) ? t1.rows[0].name : t2.rows[0].name;
     }
     
-    res.json({ battlesCount, winner, message: `Vainqueur après ${battlesCount} combats: ${winner}` });
+    const msg = `🏆 ARÈNE 2 - Série de combats déterministes:\n\n` +
+      `Nombre de combats effectués: ${battlesCount}\n` +
+      `Vainqueur: ${winner}\n\n` +
+      `${winner} remporte l'Arène 2 !`;
+    
+    res.json({ battlesCount, winner, message: msg });
   } catch (error) {
     res.status(500).json({ error: 'Erreur Arène 2', details: String(error) });
   }
