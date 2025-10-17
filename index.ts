@@ -318,6 +318,10 @@ app.post('/api/battles/deterministic', async (req, res) => {
       return res.status(400).json({ error: 'Pokémon invalides' });
     }
     
+    if (pokemon1.attacks.length === 0 || pokemon2.attacks.length === 0) {
+      return res.status(400).json({ error: 'Les Pokémon doivent avoir au moins une attaque' });
+    }
+    
     const log = [`Combat déterministe: ${pokemon1.name} (${pokemon1.lifePoint} PV) vs ${pokemon2.name} (${pokemon2.lifePoint} PV)`];
     let turn = 1;
     while (pokemon1.lifePoint > 0 && pokemon2.lifePoint > 0 && turn <= 50) {
@@ -337,6 +341,7 @@ app.post('/api/battles/deterministic', async (req, res) => {
     
     res.json({ winner, battleLog: log });
   } catch (error) {
+    console.error('Erreur combat déterministe:', error);
     res.status(500).json({ error: 'Erreur combat déterministe', details: String(error) });
   }
 });

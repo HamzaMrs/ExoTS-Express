@@ -18,6 +18,8 @@ DB_PASSWORD=2916
 ```bash
 npm install
 psql -U postgres -d mabase -f schema.sql
+# Si déjà installé, appliquer le correctif :
+psql -U postgres -d mabase -f fix-schema.sql
 npm run dev
 ```
 

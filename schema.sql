@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS trainers (
 CREATE TABLE IF NOT EXISTS pokemons (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  life_point INTEGER NOT NULL CHECK (life_point > 0),
+  life_point INTEGER NOT NULL CHECK (life_point >= 0),
   max_life_point INTEGER NOT NULL CHECK (max_life_point > 0),
   trainer_id INTEGER REFERENCES trainers(id) ON DELETE SET NULL
 );
