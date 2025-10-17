@@ -1,0 +1,238 @@
+### Fichier d'exemples de requêtes pour tester l'API Pokémon
+### Utiliser avec l'extension REST Client de VS Code
+
+@baseUrl = http://localhost:3000/api
+
+### ==========================================
+### ATTAQUES
+### ==========================================
+
+### Créer des attaques
+POST {{baseUrl}}/attacks
+Content-Type: application/json
+
+{
+  "name": "Éclair",
+  "damage": 40,
+  "usageLimit": 10
+}
+
+###
+POST {{baseUrl}}/attacks
+Content-Type: application/json
+
+{
+  "name": "Tonnerre",
+  "damage": 90,
+  "usageLimit": 5
+}
+
+###
+POST {{baseUrl}}/attacks
+Content-Type: application/json
+
+{
+  "name": "Charge",
+  "damage": 35,
+  "usageLimit": 15
+}
+
+###
+POST {{baseUrl}}/attacks
+Content-Type: application/json
+
+{
+  "name": "Fatal-Foudre",
+  "damage": 110,
+  "usageLimit": 3
+}
+
+### Lister toutes les attaques
+GET {{baseUrl}}/attacks
+
+### Détails d'une attaque
+GET {{baseUrl}}/attacks/1
+
+### ==========================================
+### POKÉMON
+### ==========================================
+
+### Créer Pikachu avec 2 attaques
+POST {{baseUrl}}/pokemons
+Content-Type: application/json
+
+{
+  "name": "Pikachu",
+  "lifePoint": 100,
+  "attackIds": [1, 2]
+}
+
+###
+POST {{baseUrl}}/pokemons
+Content-Type: application/json
+
+{
+  "name": "Raichu",
+  "lifePoint": 150,
+  "attackIds": [2, 4]
+}
+
+###
+POST {{baseUrl}}/pokemons
+Content-Type: application/json
+
+{
+  "name": "Rattata",
+  "lifePoint": 80,
+  "attackIds": [3]
+}
+
+###
+POST {{baseUrl}}/pokemons
+Content-Type: application/json
+
+{
+  "name": "Rattatac",
+  "lifePoint": 120,
+  "attackIds": [3, 1]
+}
+
+### Lister tous les Pokémon
+GET {{baseUrl}}/pokemons
+
+### Détails d'un Pokémon
+GET {{baseUrl}}/pokemons/1
+
+### Apprendre une nouvelle attaque à Pikachu
+POST {{baseUrl}}/pokemons/1/learn-attack
+Content-Type: application/json
+
+{
+  "attackId": 3
+}
+
+### Soigner Pikachu
+POST {{baseUrl}}/pokemons/1/heal
+
+### ==========================================
+### DRESSEURS
+### ==========================================
+
+### Créer Sacha
+POST {{baseUrl}}/trainers
+Content-Type: application/json
+
+{
+  "name": "Sacha",
+  "level": 1,
+  "experience": 0
+}
+
+### Créer Pierre
+POST {{baseUrl}}/trainers
+Content-Type: application/json
+
+{
+  "name": "Pierre",
+  "level": 1,
+  "experience": 0
+}
+
+### Lister tous les dresseurs
+GET {{baseUrl}}/trainers
+
+### Détails d'un dresseur
+GET {{baseUrl}}/trainers/1
+
+### Ajouter Pikachu à Sacha
+POST {{baseUrl}}/trainers/1/add-pokemon
+Content-Type: application/json
+
+{
+  "pokemonId": 1
+}
+
+### Ajouter Rattata à Sacha
+POST {{baseUrl}}/trainers/1/add-pokemon
+Content-Type: application/json
+
+{
+  "pokemonId": 3
+}
+
+### Ajouter Raichu à Pierre
+POST {{baseUrl}}/trainers/2/add-pokemon
+Content-Type: application/json
+
+{
+  "pokemonId": 2
+}
+
+### Ajouter Rattatac à Pierre
+POST {{baseUrl}}/trainers/2/add-pokemon
+Content-Type: application/json
+
+{
+  "pokemonId": 4
+}
+
+### Soigner tous les Pokémon de Sacha
+POST {{baseUrl}}/trainers/1/heal-all
+
+### Faire gagner de l'expérience à Sacha
+POST {{baseUrl}}/trainers/1/gain-experience
+Content-Type: application/json
+
+{
+  "experience": 15
+}
+
+### ==========================================
+### COMBATS
+### ==========================================
+
+### Défi aléatoire entre Sacha et Pierre
+POST {{baseUrl}}/battles/random-challenge
+Content-Type: application/json
+
+{
+  "trainer1Id": 1,
+  "trainer2Id": 2
+}
+
+### Arène 1 : 100 combats aléatoires
+POST {{baseUrl}}/battles/arena1
+Content-Type: application/json
+
+{
+  "trainer1Id": 1,
+  "trainer2Id": 2
+}
+
+### Défi déterministe entre Sacha et Pierre
+POST {{baseUrl}}/battles/deterministic-challenge
+Content-Type: application/json
+
+{
+  "trainer1Id": 1,
+  "trainer2Id": 2
+}
+
+### Arène 2 : 100 combats déterministes
+POST {{baseUrl}}/battles/arena2
+Content-Type: application/json
+
+{
+  "trainer1Id": 1,
+  "trainer2Id": 2
+}
+
+### ==========================================
+### HEALTH CHECK
+### ==========================================
+
+### Vérifier l'état de l'API
+GET http://localhost:3000/health
+
+### Documentation
+GET http://localhost:3000/
