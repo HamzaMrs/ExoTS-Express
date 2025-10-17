@@ -18,7 +18,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// Classes POO minimalistes
 class Attack {
   constructor(
     public name: string,
@@ -75,7 +74,6 @@ class Trainer {
   }
 }
 
-// Routes CRUD Attacks
 app.get('/api/attacks', async (_req, res) => {
   const { rows } = await pool.query('SELECT * FROM attacks ORDER BY id');
   res.json({ attacks: rows });
@@ -90,7 +88,6 @@ app.post('/api/attacks', async (req, res) => {
   res.status(201).json({ attack: rows[0] });
 });
 
-// Routes CRUD Pokemons
 app.get('/api/pokemons', async (_req, res) => {
   const { rows } = await pool.query(`
     SELECT p.*, json_agg(json_build_object('id', a.id, 'name', a.name, 'damage', a.damage)) AS attacks
@@ -128,7 +125,6 @@ app.post('/api/pokemons/:id/learn-attack', async (req, res) => {
   res.json({ message: 'Attaque apprise' });
 });
 
-// Routes CRUD Trainers
 app.get('/api/trainers', async (_req, res) => {
   const { rows } = await pool.query('SELECT * FROM trainers ORDER BY id');
   const trainers = [];
@@ -178,7 +174,6 @@ app.post('/api/trainers/:id/gain-experience', async (req, res) => {
   res.json({ level, experience });
 });
 
-// Combat aléatoire simple
 app.post('/api/battles/random', async (req, res) => {
   try {
     const { trainer1Id, trainer2Id } = req.body;
@@ -195,11 +190,9 @@ app.post('/api/battles/random', async (req, res) => {
       return res.status(400).json({ error: 'Chaque dresseur doit avoir au moins un Pokémon' });
     }
 
-    // Créer les Pokémon avec leurs attaques
     const pokemon1 = new Pokemon(p1.rows[0].name, p1.rows[0].life_point, p1.rows[0].max_life_point);
     const pokemon2 = new Pokemon(p2.rows[0].name, p2.rows[0].life_point, p2.rows[0].max_life_point);
     
-    // Charger les attaques du Pokémon 1
     const a1 = await pool.query(`
       SELECT a.*, pa.usage_count 
       FROM attacks a 
@@ -210,7 +203,6 @@ app.post('/api/battles/random', async (req, res) => {
       pokemon1.attacks.push(new Attack(row.name, row.damage, row.usage_limit, row.usage_count, row.id));
     });
     
-    // Charger les attaques du Pokémon 2
     const a2 = await pool.query(`
       SELECT a.*, pa.usage_count 
       FROM attacks a 
