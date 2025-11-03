@@ -125,31 +125,42 @@
 </head>
 <body>
   <header>
-    <h1>Pokémon API - Démo Web</h1>
+    <h1>Pokémon API</h1>
     <div>Express + TypeScript</div>
+    <div style="margin-top:1.2em; background: #fffbe6; color: #2a75bb; border-radius: 8px; padding: 1em 1.5em; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-size:1.05em; max-width:700px; margin-left:auto; margin-right:auto;">
+  <b>Explications du jeu :</b><br>
+  - Chaque Pokémon commence avec leurs <b>PV</b> au max.<br>
+  - Les attaques retirent des PV selon leur puissance.<br>
+  - Un Pokémon est KO si ses PV tombent à 0.<br>
+  - Les combats Arène 1 se jouent sur <b>100 duels</b> entre les équipes.<br>
+  - Le vainqueur est le dresseur ayant le plus haut <b>niveau</b> (ou XP en cas d’égalité).<br>
+  - Arène 2 : série de duels jusqu’à ce qu’un dresseur n’ait plus de Pokémon vivants.<br>
+  <span style="font-size:0.97em; opacity:0.8;">La valeur de PV affichée pour chaque Pokémon est celle réellement utilisée dans le jeu.</span>
+    </div>
   </header>
   <main>
     <section>
-      <h2>🎮 Pokémon</h2>
+      <h2> Pokémon</h2>
       <div id="pokemon-list" class="grid">Chargement...</div>
     </section>
     <section>
-      <h2>👤 Dresseurs</h2>
+      <h2> Dresseurs</h2>
       <div id="trainer-list" class="grid">Chargement...</div>
     </section>
     <section>
-      <h2>⚔️ Combats</h2>
+      <h2>Combats</h2>
       <div class="battle-form-container">
         <form id="battle-form">
         <label for="trainer1">Dresseur 1 :</label>
         <select id="trainer1"></select>
         <label for="trainer2">Dresseur 2 :</label>
         <select id="trainer2"></select>
-        <button class="btn" type="submit" name="random">⚡ Combat aléatoire</button>
-        <button class="btn" type="submit" name="deterministic">🎯 Combat déterministe</button>
-        <button class="btn" type="submit" name="arena1">🏟️ Arène 1 (100 combats)</button>
-        <button class="btn" type="submit" name="arena2">🏆 Arène 2 (série déterministe)</button>
+        <button class="btn" type="submit" name="random">Combat aléatoire</button>
+        <button class="btn" type="submit" name="deterministic">Combat déterministe</button>
+        <button class="btn" type="submit" name="arena1">Arène 1 (100 combats)</button>
+        <button class="btn" type="submit" name="arena2">Arène 2 (série déterministe)</button>
         </form>
+        <button class="btn" id="reset-pv-btn" style="margin-top:1em; background:linear-gradient(135deg,#ffcb05 0%,#ff9d00 100%); color:#2a75bb;">🔄 Réinitialiser les PV de tous les Pokémon</button>
       </div>
       <div id="battle-log" class="log" style="display:none; margin-top: 1.5rem;"></div>
     </section>
@@ -195,6 +206,18 @@
         const s1 = document.getElementById('trainer1');
         const s2 = document.getElementById('trainer2');
         s1.innerHTML = s2.innerHTML = data.trainers.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        // Défaut: Dresseur 2 = Ondine si disponible, sinon un dresseur différent de Dresseur 1
+        const ondine = data.trainers.find(t => (t.name || '').toLowerCase() === 'ondine');
+        if (ondine) {
+          s2.value = String(ondine.id);
+        } else if (data.trainers.length > 1) {
+          s2.value = String(data.trainers[1].id);
+        }
+        // S'assurer que Dresseur 1 et 2 sont différents
+        if (s1.value === s2.value) {
+          const diff = data.trainers.find(t => String(t.id) !== s1.value);
+          if (diff) s2.value = String(diff.id);
+        }
       } catch {
         el.innerHTML = '<em>Erreur de chargement.</em>';
       }
@@ -232,6 +255,24 @@
         await renderTrainers();
       } catch {
         log.textContent = 'Erreur lors du combat.';
+      }
+    };
+    document.getElementById('reset-pv-btn').onclick = async () => {
+      const log = document.getElementById('battle-log');
+      log.style.display = 'block';
+      log.textContent = 'Réinitialisation des PV en cours...';
+      try {
+        const res = await fetch(API + '/health/reset', { method: 'POST' });
+        const data = await res.json();
+        if (data.message) {
+          log.textContent = data.message;
+        } else {
+          log.textContent = 'PV réinitialisés.';
+        }
+        await renderPokemons();
+        await renderTrainers();
+      } catch {
+        log.textContent = 'Erreur lors de la réinitialisation.';
       }
     };
     renderPokemons();
